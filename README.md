@@ -1,2 +1,3 @@
 # User Authentication With Express and Mongo
-Project code to support the [Treehouse](https://teamtreehouse.com) course [User Authentication With Express and Mongo](https://teamtreehouse.com/library/user-authentication-with-express-and-mongo)
+To run this app, navigate to the folder containing this project, type "npm install", once the modules are downloaded, type "npm start"
+and visit using your web browser on port 3000 (http://localhost: 3000)
