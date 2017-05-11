@@ -9,7 +9,22 @@ router.get('/login', function(req, res, next){
 
 // Post /login
 router.post('/login', function(req, res, next) {
-  return res.send('Logged In!');
+  if(req.body.email && req.body.password) {
+    User.authenticate(req.body.email, req.body.password, function(error, user) {
+      if(error || !user) {
+        var err = new Error('Invalid email or password.');
+        err.status = 401;
+        return next(err);
+      } else {
+        req.session.userId = user._id;
+        return res.redirect('/profile');
+      }
+    });
+  } else {
+    var err = new Error('Email and password are required.');
+    err.status = 401;
+    return next(err);
+  }
 });
 
 // Get /reigister
@@ -43,6 +58,7 @@ router.post('/register', function(req, res, next) {
         if(error){
           return next(error);
         } else {
+          req.session.userId = user._id;
           return res.redirect('/profile');
         }
       });
@@ -69,5 +85,24 @@ router.get('/about', function(req, res, next) {
 router.get('/contact', function(req, res, next) {
   return res.render('contact', { title: 'Contact' });
 });
+
+// GET /profile
+router.get('/profile', function(req, res, next) {
+  if (! req.session.userId ) {
+    var err = new Error("Please log in first.");
+    err.status = 403;
+    return next(err);
+  }
+  User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          return res.render('profile', { title: 'Profile', name: user.name, favorite: user.favoriteBook });
+        }
+      });
+});
+
+
 
 module.exports = router;
